@@ -38,8 +38,8 @@ function scramble(el) {
 }
 
 list.innerHTML = ROLES.map((r, i) => `
-  <li role="option" id="role-${i}" aria-selected="false">
-    <button type="button" class="slot" data-i="${i}" tabindex="-1">
+  <li>
+    <button type="button" class="slot" data-i="${i}" aria-pressed="false">
       <span class="slot__num">${pad(i + 1)}</span>
       <span class="slot__text"><small>${r.bereich}</small>${r.role}</span>
     </button>
@@ -61,9 +61,8 @@ function select(i, { first = false } = {}) {
   slots.forEach((s, k) => {
     const on = k === i;
     s.classList.toggle("is-active", on);
-    s.parentElement.setAttribute("aria-selected", on);
+    s.setAttribute("aria-pressed", on);
   });
-  list.setAttribute("aria-activedescendant", `role-${i}`);
   slots[i].scrollIntoView({ block: "nearest", inline: "nearest", behavior: reducedMotion || first ? "auto" : "smooth" });
 
   $("[data-index]").textContent = `${pad(i + 1)} / ${ROLES.length}`;
@@ -92,13 +91,16 @@ list.addEventListener("click", (e) => {
 });
 
 // keys and wheel step through the roster like a game menu
-document.addEventListener("keydown", (e) => {
-  if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); select(current + 1); }
-  if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); select(current - 1); }
-  if (e.key === "Enter" && !e.target.closest("a, button")) $(".choose").click();
-});
 // only on the desktop lobby — on phones the page scrolls normally
 const desktop = window.matchMedia("(min-width: 901px)");
+document.addEventListener("keydown", (e) => {
+  if (!desktop.matches || e.target.closest("input, textarea")) return;
+  if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); select(current + 1); }
+  if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); select(current - 1); }
+  // keep keyboard focus on the highlighted role while stepping through the list
+  if (list.contains(document.activeElement)) slots[current].focus();
+  if (e.key === "Enter" && !e.target.closest("a, button")) $(".choose").click();
+});
 let wheelLock = 0;
 window.addEventListener("wheel", (e) => {
   if (!desktop.matches || Math.abs(e.deltaY) < 4 || e.target.closest(".profile")) return;
@@ -117,10 +119,14 @@ $(".choose").addEventListener("click", (e) => {
   btn.classList.add("is-confirm");
 });
 
+const SEEN_KEY = "bw-lobby-seen";
+function seenBefore() {
+  try { return sessionStorage.getItem(SEEN_KEY) === "1"; } catch { return false; }
+}
 function runLoader() {
   const pct = $(".loader__pct");
   return new Promise((resolve) => {
-    if (reducedMotion) return resolve();
+    if (reducedMotion || seenBefore()) return resolve();
     const start = performance.now();
     const tick = (now) => {
       const p = Math.min((now - start) / LOADER_MS, 1);
@@ -135,6 +141,7 @@ function runLoader() {
 document.fonts.ready.then(async () => {
   document.body.classList.add("is-loading");
   await runLoader();
+  try { sessionStorage.setItem(SEEN_KEY, "1"); } catch { /* storage blocked: loader just plays again */ }
   document.body.classList.add("is-in");
   select(0, { first: true });
   setTimeout(() => $(".loader").remove(), 700);
