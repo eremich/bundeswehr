@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bundeswehr Karriere — Wähle deinen Bereich (Konzept)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Inoffizielles Designkonzept einer Karriereseite der Bundeswehr." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Big+Shoulders+Display:wght@800;900&display=swap" rel="stylesheet" />
+  <style>html { background: #002437; }</style>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body data-theme="navy">
+  <canvas class="stage" aria-hidden="true"></canvas>
+
+  <!-- boot screen, like a game client starting up -->
+  <div class="boot" aria-hidden="true">
+    <p>KARRIERE-OS // BOOT</p>
+    <p>LADE 10 BEREICHE ......... OK</p>
+    <p>SIGNAL DE-01 .............. OK</p>
+    <p>WÄHLE DEINEN BEREICH</p>
+    <span class="boot__count">000</span>
+  </div>
+
+  <main class="hero" id="top">
+    <header class="nav">
+      <a class="brand" href="#top" aria-label="Bundeswehr Karriere">
+        <span class="brand__logo" aria-hidden="true"></span>
+        <span class="brand__text"><b>Bundeswehr</b><span>Karriere</span></span>
+      </a>
+      <div class="nav__meta" aria-hidden="true">
+        <span data-scramble>KARRIERE-OS // V26.10</span>
+        <span data-scramble>DE · 52.52N 13.40E</span>
+      </div>
+      <a class="nav__cta" href="#modus">Beratung <kbd>↵</kbd></a>
+    </header>
+
+    <div class="ticker ticker--top" aria-hidden="true">
+      <div class="ticker__track"><span>NEUER WEHRDIENST // 30 TAGE URLAUB // KEINE SOZIALABGABEN // AUSBILDUNG · STUDIUM · QUEREINSTIEG // BERUFE RADAR: DEIN MATCH IN UNTER 15 MIN // ASSESSMENT TRAINER: 25 FRAGEN // </span></div>
+    </div>
+
+    <div class="top">
+      <h1 class="slogan">Mach, was <em>wirklich</em> zählt.</h1>
+      <p class="hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> Bereich wechseln</p>
+    </div>
+
+    <p class="giant" aria-hidden="true"><span class="giant__inner"><span class="giant__word">Technik</span><span class="giant__code">01</span></span></p>
+
+    <div class="deck">
+      <section class="card" aria-live="polite" aria-labelledby="card-name">
+        <div class="card__head">
+          <span class="card__code" data-code>BEREICH 01 / 10</span>
+          <span>PROFIL</span>
+        </div>
+        <h2 class="card__name" id="card-name" data-name>Technik</h2>
+        <p class="card__desc" data-desc></p>
+        <ul class="stats"></ul>
+        <div class="modes" id="modus">
+          <a class="mode mode--primary" href="#entdecker">Entdecker Modus <span aria-hidden="true">→</span></a>
+          <a class="mode" href="#karriere">Karriere Modus</a>
+        </div>
+      </section>
+
+      <div class="stickers" aria-hidden="true">
+        <span class="sticker sticker--a">Neuer<br />Wehrdienst</span>
+        <span class="sticker sticker--b">30 Tage Urlaub</span>
+        <span class="sticker sticker--c"><i class="barcode"></i>BW-KRR-2026</span>
+      </div>
+    </div>
+
+    <nav class="rail" aria-label="Bereiche"></nav>
+
+    <div class="ticker ticker--bottom" aria-hidden="true">
+      <div class="ticker__track"><span>BUNDESWEHR KARRIERE // SEKTOR DE-01 // 10 BEREICHE // ÜBER 1000 BERUFE // BERATUNG VOR ORT UND ONLINE // MACH, WAS WIRKLICH ZÄHLT // </span></div>
+    </div>
+  </main>
+
+  <!-- hard-cut transition bars -->
+  <div class="cut" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <footer class="footer">
+    <p>Inoffizielles Designkonzept. Nicht mit der Bundeswehr verbunden.</p>
+    <p><a href="https://ihor-yeromich.vercel.app/" target="_blank" rel="noopener">© 2026 Ihor Yeromich</a> · Design &amp; Code</p>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
