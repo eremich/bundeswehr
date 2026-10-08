@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bundeswehr Karriere — Wer wirst du? (Konzept)</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="description" content="Inoffizielles Designkonzept: Karriereseite der Bundeswehr als Charakterauswahl." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Big+Shoulders+Display:wght@800;900&display=swap" rel="stylesheet" />
+  <style>html { background: #001521; }</style>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- Preloader: the Bundeswehr mark draws itself, then the lobby loads -->
+  <div class="loader" aria-hidden="true">
+    <svg class="loader__mark" viewBox="0 0 100 100">
+      <g transform="translate(24 0)">
+        <path pathLength="1" d="M-24,86.7c6-1.9,12.6-4,17.1-4.8c-0.7,4.5-2.9,11-4.8,17.1l10.5-0.2c4.1-10.3,7.9-22.9,9.3-32.1C-1.1,68.1-13.8,72.1-24,76V86.7z"/>
+        <path pathLength="1" d="M-11.8,0c1.9,6,4,12.6,4.8,17.1c-4.5-0.7-11-2.9-17.1-4.8l0.2,10.5c10.3,4.1,22.9,7.9,32.1,9.3C6.9,22.9,2.9,10.2-1.1,0H-11.8z"/>
+        <path pathLength="1" d="M62.6,99c-1.9-6-4-12.6-4.8-17.1c4.5,0.7,11,2.9,17.1,4.8l-0.2-10.5c-10.3-4.1-22.9-7.9-32.1-9.3c1.4,9.1,5.3,21.9,9.3,32.1H62.6z"/>
+        <path pathLength="1" d="M75,12.4c-6,1.9-12.6,4-17.1,4.8c0.7-4.5,2.9-11,4.8-17.1L52.2,0.3c-4.1,10.3-7.9,22.9-9.3,32.1C52,31,64.8,27.1,75,23.1V12.4z"/>
+        <path pathLength="1" d="M75,32.2c-9,3.4-26.2,8.6-42.6,10.5c1.9-16.4,7.1-33.6,10.3-42.6H8.2c3.4,9,8.4,26.4,10.3,42.6C2.2,40.9-15,35.7-24,32.2v34.7c9-3.4,26.2-8.6,42.6-10.5C16.7,72.8,11.5,90,8.2,99h34.5c-3.4-9-8.4-26.4-10.3-42.6C48.8,58.3,66,63.4,75,66.9V32.2z"/>
+      </g>
+    </svg>
+    <p class="loader__word">Bundeswehr</p>
+    <div class="loader__bar"><i></i></div>
+    <p class="loader__status"><span>Lade Rollen</span><span class="loader__pct">0%</span></p>
+  </div>
+
+  <header class="top">
+    <a class="brand" href="#top" aria-label="Bundeswehr Karriere">
+      <span class="brand__logo" aria-hidden="true"></span>
+      <span class="brand__text"><b>Bundeswehr</b><span>Karriere</span></span>
+    </a>
+    <ol class="steps" aria-label="Fortschritt">
+      <li class="is-active" aria-current="step"><span>01</span> Rolle</li>
+      <li><span>02</span> Profil</li>
+      <li><span>03</span> Bewerbung</li>
+    </ol>
+    <a class="top__cta" href="#beratung">Beratung</a>
+  </header>
+
+  <main class="lobby" id="top">
+    <!-- huge ghosted Bereich name behind the figure -->
+    <p class="ghost" aria-hidden="true" data-ghost>Technik</p>
+    <canvas class="stage" aria-label="Platzhalter-Figur. Ziehen zum Drehen."></canvas>
+
+    <section class="roster" aria-labelledby="roster-title">
+      <p class="eyebrow">Charakterauswahl</p>
+      <h1 class="roster__title" id="roster-title">Wer wirst du?</h1>
+      <ul class="roster__list" role="listbox" aria-label="Rollen"></ul>
+    </section>
+
+    <aside class="profile" aria-live="polite">
+      <p class="profile__tag"><span data-index>01 / 10</span> Bereich <b data-bereich>Technik</b></p>
+      <h2 class="profile__role" data-role>Kfz-Mechatroniker/in</h2>
+      <p class="profile__desc" data-desc></p>
+      <h3 class="profile__label">Profil</h3>
+      <ul class="stats"></ul>
+      <h3 class="profile__label">Ausrüstung</h3>
+      <ul class="loadout"></ul>
+      <h3 class="profile__label">Einstieg</h3>
+      <ul class="entry"></ul>
+    </aside>
+
+    <p class="placeholder-note" aria-hidden="true">Platzhalter-Modell · ziehen zum Drehen</p>
+
+    <footer class="bar">
+      <p class="bar__keys" aria-hidden="true">
+        <span><kbd>↑</kbd><kbd>↓</kbd> Rolle wechseln</span>
+        <span><kbd>Maus</kbd> Drehen</span>
+        <span><kbd>↵</kbd> Auswählen</span>
+      </p>
+      <a class="choose" href="#profil"><span>Rolle wählen</span> <kbd aria-hidden="true">↵</kbd></a>
+    </footer>
+  </main>
+
+  <p class="credit">Inoffizielles Designkonzept. Nicht mit der Bundeswehr verbunden. · <a href="https://ihor-yeromich.vercel.app/" target="_blank" rel="noopener">© 2026 Ihor Yeromich</a></p>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
