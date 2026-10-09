@@ -38,9 +38,9 @@
     <ol class="steps" aria-label="Fortschritt">
       <li class="is-active" aria-current="step" data-step="1"><span>01</span> Rolle</li>
       <li data-step="2"><span>02</span> Profil</li>
-      <li><span>03</span> Bewerbung</li>
+      <li data-step="3"><span>03</span> Bewerbung</li>
     </ol>
-    <a class="top__cta" href="#beratung">Beratung</a>
+    <a class="top__cta" href="https://www.bundeswehrkarriere.de/karriere/beratung-kontakt/beratungsgespraech" target="_blank" rel="noopener">Beratung</a>
   </header>
 
   <main class="lobby" id="top">
@@ -78,7 +78,7 @@
     </footer>
 
     <!-- step 02: the chosen role's dossier — career path as levels, employer perks as rewards -->
-    <section class="dossier" id="profil" aria-labelledby="dossier-title" hidden>
+    <section class="screen dossier" id="profil" aria-labelledby="dossier-title" hidden>
       <p class="dossier__confirm"><span class="dossier__check" aria-hidden="true"></span> Rolle bestätigt <b data-d-index>01 / 10</b></p>
       <h2 class="dossier__title" id="dossier-title" tabindex="-1" data-d-role>Kfz-Mechatroniker/in</h2>
       <p class="dossier__bereich">Bereich <b data-d-bereich>Technik</b></p>
@@ -88,8 +88,46 @@
       <ul class="perks"></ul>
       <p class="dossier__note">Vorteile laut bundeswehrkarriere.de, je nach Laufbahn. Karriereweg vereinfacht.</p>
       <div class="dossier__actions">
-        <a class="choose" href="https://www.bundeswehrkarriere.de/karriere/beratung-kontakt/beratungsgespraech" target="_blank" rel="noopener"><span>Beratung vereinbaren</span> <kbd aria-hidden="true">↗</kbd></a>
-        <button type="button" class="back"><kbd aria-hidden="true">Esc</kbd> Andere Rolle</button>
+        <button type="button" class="choose" data-go="briefing" aria-controls="bewerbung"><span>Weiter zur Bewerbung</span> <kbd aria-hidden="true">→</kbd></button>
+        <button type="button" class="back" data-go="lobby"><kbd aria-hidden="true">Esc</kbd> Andere Rolle</button>
+      </div>
+    </section>
+
+    <!-- step 03: application as a mission briefing — real steps from bundeswehrkarriere.de -->
+    <section class="screen briefing" id="bewerbung" aria-labelledby="briefing-title" hidden>
+      <p class="dossier__confirm"><span class="dossier__check" aria-hidden="true"></span> Mission Briefing <b data-b-role>Kfz-Mechatroniker/in</b></p>
+      <h2 class="dossier__title" id="briefing-title" tabindex="-1">So startest du</h2>
+      <div class="briefing__grid">
+        <div>
+          <h3 class="dossier__label">Hauptmission</h3>
+          <ol class="missions"></ol>
+        </div>
+        <div>
+          <h3 class="dossier__label">Nebenmissionen</h3>
+          <ul class="side">
+            <li>
+              <a href="https://www.bundeswehrkarriere.de/karriere/digitales-karrierecenter/assessment-trainer" target="_blank" rel="noopener">
+                <span class="side__tag">Training</span>
+                <b>Assessment Trainer</b>
+                <span>25 Fragen, 20 Minuten. Üb für den Computertest im Auswahlverfahren.</span>
+                <span class="side__go" aria-hidden="true">Starten ↗</span>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.bundeswehrkarriere.de/karriere/digitales-karrierecenter/berufe-radar" target="_blank" rel="noopener">
+                <span class="side__tag">Scan</span>
+                <b>Berufe Radar</b>
+                <span>In unter 15 Minuten herausfinden, welche Berufe zu dir passen.</span>
+                <span class="side__go" aria-hidden="true">Starten ↗</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <p class="dossier__note">Ablauf laut bundeswehrkarriere.de, vereinfacht. Inoffizielles Designkonzept.</p>
+      <div class="dossier__actions">
+        <a class="choose" href="https://www.bundeswehrkarriere.de/bewerbungsportal" target="_blank" rel="noopener"><span>Bewerbung starten</span> <kbd aria-hidden="true">↗</kbd></a>
+        <button type="button" class="back" data-go="profile"><kbd aria-hidden="true">Esc</kbd> Zurück zum Profil</button>
       </div>
     </section>
   </main>

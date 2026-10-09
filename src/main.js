@@ -7,7 +7,7 @@ const WHEEL_LOCK_MS = 450;
 const LOADER_MS = 2200;
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/";
 const SCRAMBLE_MS = 420;
-const DOSSIER_OUT_MS = 450; // matches the CSS exit, then the panel is hidden
+const DOSSIER_OUT_MS = 450; // matches the CSS exit, then the screen is hidden
 
 const $ = (s) => document.querySelector(s);
 const list = $(".roster__list");
@@ -96,9 +96,12 @@ list.addEventListener("click", (e) => {
   if (slot) select(Number(slot.dataset.i));
 });
 
-// ---------- Step 02: dossier ----------
+// ---------- Steps 02 + 03: dossier and mission briefing ----------
+const BERATUNG_URL = "https://www.bundeswehrkarriere.de/karriere/beratung-kontakt/beratungsgespraech";
+const SCREENS = { profile: dossier, briefing: $(".briefing") };
+const STEP_OF = { lobby: 1, profile: 2, briefing: 3 };
 let mode = "lobby";
-let closeTimer = 0;
+const hideTimers = new Map();
 
 function setStep(n) {
   document.querySelectorAll(".steps li").forEach((li) => {
@@ -120,46 +123,91 @@ function fillDossier(r) {
     <li style="--i:${k}"><b>${p.value}</b><span>${p.label}</span></li>`).join("");
 }
 
-function openProfile() {
-  if (mode === "profile") return;
-  mode = "profile";
-  clearTimeout(closeTimer);
-  fillDossier(ROLES[current]);
-  dossier.hidden = false;
-  void dossier.offsetWidth; // let the entrance transition start from the hidden state
+// real application steps from bundeswehrkarriere.de/karriere/digitales-karrierecenter/bewerbungsinfos
+function missionsFor(r) {
+  const civil = r.perks === "civil";
+  const officer = r.perks === "study";
+  const tests = civil
+    ? ["Vorstellungsgespräch"]
+    : ["Computertest (CAT)", "Vorstellungsgespräch", ...(officer ? ["Gruppensituation"] : []), "Ärztliche Untersuchung", "Basis-Fitnesstest"];
+  return [
+    { title: "Beratungsgespräch", text: "Persönlich, am Telefon oder per Video — unverbindlich.", link: { label: "Termin finden", href: BERATUNG_URL } },
+    { title: "Online bewerben", text: "Lebenslauf und Zeugnisse im Bewerbungsportal hochladen." },
+    { title: civil ? "Auswahlgespräch" : "Auswahlverfahren", text: civil ? "Wir lernen uns kennen." : "Tests und Gespräche in einem Karrierecenter der Bundeswehr.", chips: tests },
+    { title: civil ? "Zusage" : "Einplanung", text: civil ? "Du bekommst dein Angebot und deinen Starttermin." : "Du erfährst Standort, Einheit und Startdatum." },
+    { title: civil ? "Erster Arbeitstag" : "Dienstantritt", text: civil ? `Willkommen im Team als ${r.role}.` : `Los geht's mit der Grundausbildung. Ziel: ${r.role}.` },
+  ];
+}
+
+function fillBriefing(r) {
+  $("[data-b-role]").textContent = r.role;
+  $(".missions").innerHTML = missionsFor(r).map((m, k) => `
+    <li style="--i:${k}" class="${k === 0 ? "is-current" : ""}">
+      <span class="missions__num">${pad(k + 1)}</span>
+      <div>
+        <b>${m.title}</b> ${k === 0 ? '<span class="missions__state">Aktiv</span>' : ""}
+        <p>${m.text}</p>
+        ${m.chips ? `<ul class="missions__chips">${m.chips.map((c) => `<li>${c}</li>`).join("")}</ul>` : ""}
+        ${m.link ? `<a class="missions__link" href="${m.link.href}" target="_blank" rel="noopener">${m.link.label} ↗</a>` : ""}
+      </div>
+    </li>`).join("");
+}
+
+function showScreen(name) {
+  for (const [key, el] of Object.entries(SCREENS)) {
+    clearTimeout(hideTimers.get(el));
+    if (key === name) {
+      el.hidden = false;
+      void el.offsetWidth; // let the entrance transition start from the hidden state
+      el.classList.add("is-open");
+    } else if (!el.hidden) {
+      el.classList.remove("is-open");
+      hideTimers.set(el, setTimeout(() => { el.hidden = true; }, reducedMotion ? 0 : DOSSIER_OUT_MS));
+    }
+  }
+}
+
+function go(next) {
+  if (next === mode) return;
+  const r = ROLES[current];
+  const from = mode;
+  mode = next;
+  setStep(STEP_OF[next]);
+  if (next === "lobby") {
+    showScreen(null);
+    document.body.classList.remove("is-profile");
+    stage?.setPan(false);
+    slots[current].focus({ preventScroll: true });
+    if (!desktop.matches) window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+    return;
+  }
+  if (next === "profile") fillDossier(r);
+  if (next === "briefing") fillBriefing(r);
   document.body.classList.add("is-profile");
-  setStep(2);
   stage?.setPan(true);
-  stage?.flash();
-  if (!reducedMotion) restart($(".sweep"), "is-on");
-  scramble($("[data-d-role]"));
-  const title = $("#dossier-title");
-  title.focus({ preventScroll: true });
-  if (!desktop.matches) dossier.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+  // the sweep and beam mark moving forward; going back is quieter
+  if (STEP_OF[next] > STEP_OF[from]) {
+    stage?.flash();
+    if (!reducedMotion) restart($(".sweep"), "is-on");
+  }
+  showScreen(next);
+  if (next === "profile") scramble($("[data-d-role]"));
+  const screen = SCREENS[next];
+  screen.querySelector("h2").focus({ preventScroll: true });
+  if (!desktop.matches) screen.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
 }
 
-function closeProfile() {
-  if (mode !== "profile") return;
-  mode = "lobby";
-  document.body.classList.remove("is-profile");
-  setStep(1);
-  stage?.setPan(false);
-  closeTimer = setTimeout(() => { dossier.hidden = true; }, reducedMotion ? 0 : DOSSIER_OUT_MS);
-  slots[current].focus({ preventScroll: true });
-  if (!desktop.matches) window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
-}
-
-chooseBtn.addEventListener("click", openProfile);
-$(".back").addEventListener("click", closeProfile);
+chooseBtn.addEventListener("click", () => go("profile"));
+document.querySelectorAll("[data-go]").forEach((btn) => btn.addEventListener("click", () => go(btn.dataset.go)));
 
 // keys and wheel step through the roster like a game menu
 document.addEventListener("keydown", (e) => {
   if (e.target.closest("input, textarea")) return;
-  if (mode === "profile") {
-    if (e.key === "Escape") closeProfile();
+  if (mode !== "lobby") {
+    if (e.key === "Escape") go(mode === "briefing" ? "profile" : "lobby");
     return;
   }
-  if (e.key === "Enter" && !e.target.closest("a, button")) { openProfile(); return; }
+  if (e.key === "Enter" && !e.target.closest("a, button")) { go("profile"); return; }
   if (!desktop.matches) return;
   if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); select(current + 1); }
   if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); select(current - 1); }
@@ -168,7 +216,7 @@ document.addEventListener("keydown", (e) => {
 });
 let wheelLock = 0;
 window.addEventListener("wheel", (e) => {
-  if (mode === "profile" || !desktop.matches || Math.abs(e.deltaY) < 4 || e.target.closest(".profile")) return;
+  if (mode !== "lobby" || !desktop.matches || Math.abs(e.deltaY) < 4 || e.target.closest(".profile")) return;
   e.preventDefault();
   const now = performance.now();
   if (now < wheelLock) return;
