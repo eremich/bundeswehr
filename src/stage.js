@@ -17,6 +17,9 @@ const GLOW_STRENGTH = 0.32;
 const CUTOUT_SWAY = 0.1; // rad, idle sway of flat characters
 const CUTOUT_MAX_TURN = 0.4; // flat characters can't spin, only lean toward the cursor
 const TEXTURE_WAIT_MS = 2000;
+// on the profile screen the camera slides right so the character sits in the left third
+const PAN_X = 1.35;
+const PAN_EASE = 0.08;
 
 // camera framings: phones get the character closer, short desktops pull back
 // so the platform clears the bottom bar
@@ -160,15 +163,20 @@ export function createStage(canvas, { reducedMotion }) {
   character.visible = false;
   scene.add(character);
 
+  let framing = FRAMING.wide;
+  let pan = 0;
+  let panTarget = 0;
+  let panWanted = false;
   function resize() {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     renderer.setSize(w, h, false);
     const aspect = w / h;
     const f = w < NARROW_WIDTH || aspect < NARROW_ASPECT ? FRAMING.narrow : aspect > SHORT_ASPECT ? FRAMING.short : FRAMING.wide;
+    framing = f;
+    // phones stack the dossier below the stage, so the character stays centred there
+    panTarget = panWanted && f !== FRAMING.narrow ? PAN_X : 0;
     camera.aspect = aspect;
     camera.fov = f.fov;
-    camera.position.set(...f.pos);
-    camera.lookAt(0, f.look, 0);
     camera.updateProjectionMatrix();
   }
   resize();
@@ -217,6 +225,9 @@ export function createStage(canvas, { reducedMotion }) {
       for (let i = 0; i < DUST_COUNT; i++) d.setY(i, (d.getY(i) + dt * 0.08) % 4);
       d.needsUpdate = true;
     }
+    pan += (panTarget - pan) * (reducedMotion ? 1 : PAN_EASE);
+    camera.position.set(framing.pos[0] + pan, framing.pos[1], framing.pos[2]);
+    camera.lookAt(pan, framing.look, 0);
     beamFlash = Math.max(0, beamFlash - dt * 1.8);
     beam.value = beamFlash;
     renderer.render(scene, camera);
@@ -226,6 +237,11 @@ export function createStage(canvas, { reducedMotion }) {
 
   return {
     preload(urls) { urls.forEach(loadTexture); },
+    setPan(on) {
+      panWanted = on;
+      panTarget = on && framing !== FRAMING.narrow ? PAN_X : 0;
+    },
+    flash() { beamFlash = 1; },
     // despawn the current character, swap the image, then spawn the new one
     async setRole(role, { first = false } = {}) {
       if (!first) await animateCut(0, DESPAWN_MS);

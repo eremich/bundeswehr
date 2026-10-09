@@ -36,8 +36,8 @@
       <span class="brand__text"><b>Bundeswehr</b><span>Karriere</span></span>
     </a>
     <ol class="steps" aria-label="Fortschritt">
-      <li class="is-active" aria-current="step"><span>01</span> Rolle</li>
-      <li><span>02</span> Profil</li>
+      <li class="is-active" aria-current="step" data-step="1"><span>01</span> Rolle</li>
+      <li data-step="2"><span>02</span> Profil</li>
       <li><span>03</span> Bewerbung</li>
     </ol>
     <a class="top__cta" href="#beratung">Beratung</a>
@@ -74,9 +74,27 @@
         <span><kbd>Maus</kbd> Bewegen</span>
         <span><kbd>↵</kbd> Auswählen</span>
       </p>
-      <a class="choose" href="#profil"><span>Rolle wählen</span> <kbd aria-hidden="true">↵</kbd></a>
+      <button type="button" class="choose" aria-controls="profil"><span>Rolle wählen</span> <kbd aria-hidden="true">↵</kbd></button>
     </footer>
+
+    <!-- step 02: the chosen role's dossier — career path as levels, employer perks as rewards -->
+    <section class="dossier" id="profil" aria-labelledby="dossier-title" hidden>
+      <p class="dossier__confirm"><span class="dossier__check" aria-hidden="true"></span> Rolle bestätigt <b data-d-index>01 / 10</b></p>
+      <h2 class="dossier__title" id="dossier-title" tabindex="-1" data-d-role>Kfz-Mechatroniker/in</h2>
+      <p class="dossier__bereich">Bereich <b data-d-bereich>Technik</b></p>
+      <h3 class="dossier__label">Dein Weg</h3>
+      <ol class="path"></ol>
+      <h3 class="dossier__label">Deine Vorteile</h3>
+      <ul class="perks"></ul>
+      <p class="dossier__note">Vorteile laut bundeswehrkarriere.de, je nach Laufbahn. Karriereweg vereinfacht.</p>
+      <div class="dossier__actions">
+        <a class="choose" href="https://www.bundeswehrkarriere.de/karriere/beratung-kontakt/beratungsgespraech" target="_blank" rel="noopener"><span>Beratung vereinbaren</span> <kbd aria-hidden="true">↗</kbd></a>
+        <button type="button" class="back"><kbd aria-hidden="true">Esc</kbd> Andere Rolle</button>
+      </div>
+    </section>
   </main>
+
+  <div class="sweep" aria-hidden="true"></div>
 
   <p class="credit">Inoffizielles Designkonzept. Nicht mit der Bundeswehr verbunden. · <a href="https://ihor-yeromich.vercel.app/" target="_blank" rel="noopener">© 2026 Ihor Yeromich</a></p>
 

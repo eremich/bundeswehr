@@ -100,6 +100,7 @@ kbd {
 .steps li { display: flex; align-items: center; gap: 8px; height: var(--top-h); border-bottom: 2px solid transparent; }
 .steps span { font-size: 10px; }
 .steps .is-active { color: var(--white); border-color: var(--gold); }
+.steps .is-done { color: var(--gold); }
 .top__cta {
   display: inline-flex;
   align-items: center;
@@ -241,17 +242,103 @@ kbd {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
+  border: 0;
+  cursor: pointer;
   clip-path: polygon(var(--notch) 0, 100% 0, 100% calc(100% - var(--notch)), calc(100% - var(--notch)) 100%, 0 100%, 0 var(--notch));
   transition: transform 140ms var(--ease-out), background-color 160ms ease;
 }
 .choose:active { transform: scale(0.97); }
-.choose.is-confirm { animation: confirm 500ms var(--ease-out); }
-@keyframes confirm { 0% { background: var(--white); } 100% { background: var(--gold); } }
 @media (hover: hover) and (pointer: fine) {
   .choose:hover { background: var(--gold-soft); }
 }
 
 .credit { margin: 0; padding: 16px var(--gutter); background: var(--navy-deep); color: var(--dim); font-size: 12px; }
+
+/* ---------- Step 02: dossier ---------- */
+.dossier {
+  position: absolute;
+  z-index: 3;
+  top: calc(var(--top-h) + 24px);
+  right: var(--gutter);
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  width: min(780px, 56vw);
+  padding: 24px 28px;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  backdrop-filter: blur(8px);
+  clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+  opacity: 0;
+  transform: translateX(32px);
+  transition: opacity 300ms ease, transform 500ms var(--ease-out);
+}
+.dossier[hidden] { display: none; }
+.is-profile .dossier { opacity: 1; transform: none; transition-delay: 150ms; }
+.dossier__confirm { display: flex; align-items: center; gap: 10px; margin: 0; font: 800 11px var(--font); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); }
+.dossier__confirm b { margin-left: auto; color: var(--dim); }
+.dossier__check { display: inline-grid; place-items: center; width: 20px; height: 20px; background: var(--gold); }
+.dossier__check::after { content: ""; width: 9px; height: 5px; margin-top: -2px; border: solid var(--navy); border-width: 0 0 2px 2px; transform: rotate(-45deg); }
+.dossier__title { margin: 12px 0 4px; font: 900 clamp(40px, 4vw, 64px)/0.9 var(--display); text-transform: uppercase; outline: none; }
+.dossier__bereich { margin: 0; font: 700 12px var(--font); letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+.dossier__bereich b { color: var(--white); }
+.dossier__label { margin: 24px 0 10px; font: 800 11px var(--font); letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); }
+.dossier__note { margin: 12px 0 0; font-size: 12px; color: var(--dim); }
+
+/* career path as game levels; the gold bar on each card fills in sequence */
+.path { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.path li { position: relative; padding: 16px 14px 16px; border: 1px solid rgba(255, 255, 255, 0.12); background: rgba(255, 255, 255, 0.03); }
+.path li::before { content: ""; position: absolute; inset: -1px -1px auto; height: 3px; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+.is-profile .path li::before { transform: scaleX(1); transition: transform 380ms var(--ease-out) calc(450ms + var(--i) * 200ms); }
+.path__lvl { display: block; margin-bottom: 14px; font: 800 10px var(--font); letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+.path b { display: block; margin-bottom: 6px; font: 900 19px/1 var(--display); text-transform: uppercase; }
+.path__text { font-size: 13px; line-height: 1.45; color: var(--dim); }
+
+.perks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.perks li { display: grid; align-content: start; gap: 4px; padding: 14px; border: 1px solid var(--line); background: rgba(249, 182, 0, 0.06); }
+.perks b { font: 900 30px/1 var(--display); color: var(--gold); }
+.perks span { font-size: 13px; line-height: 1.35; color: var(--dim); }
+.path li, .perks li { opacity: 0; transform: translateY(8px); }
+.is-profile .path li, .is-profile .perks li { opacity: 1; transform: none; transition: opacity 300ms ease, transform 400ms var(--ease-out); }
+.is-profile .path li { transition-delay: calc(300ms + var(--i) * 80ms); }
+.is-profile .perks li { transition-delay: calc(500ms + var(--i) * 60ms); }
+
+.dossier__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: auto; padding-top: 24px; }
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: var(--white);
+  font: 800 13px var(--font);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 160ms ease, transform 140ms var(--ease-out);
+}
+.back:active { transform: scale(0.97); }
+@media (hover: hover) and (pointer: fine) {
+  .back:hover { border-color: var(--gold); }
+}
+
+/* lobby UI steps aside while the dossier is open (body. beats the entrance rules below) */
+body.is-profile .roster { animation: to-left 320ms var(--ease-in-out) forwards; }
+body.is-profile .profile { animation: to-right 320ms var(--ease-in-out) forwards; }
+body.is-profile .bar, body.is-profile .placeholder-note { animation: to-below 280ms var(--ease-in-out) forwards; }
+.is-profile .ghost { opacity: 0.35; }
+@keyframes to-left { to { opacity: 0; transform: translateX(-24px); visibility: hidden; } }
+@keyframes to-right { to { opacity: 0; transform: translateX(24px); visibility: hidden; } }
+@keyframes to-below { to { opacity: 0; transform: translateY(16px); visibility: hidden; } }
+
+/* gold scan line sweeping across the screen when a role is confirmed */
+.sweep { position: fixed; inset: 0; z-index: 30; pointer-events: none; overflow: hidden; }
+.sweep::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 3px; background: var(--gold); box-shadow: 0 0 24px 6px rgba(249, 182, 0, 0.45); transform: translateX(-10vw); opacity: 0; }
+.sweep.is-on::before { animation: sweep 700ms var(--ease-in-out); }
+@keyframes sweep { 0% { opacity: 1; transform: translateX(-10vw); } 100% { opacity: 1; transform: translateX(110vw); } }
 
 /* ---------- Entrance ---------- */
 .roster, .profile, .bar, .ghost { opacity: 0; }
@@ -276,6 +363,12 @@ kbd {
   .profile__label { margin: 14px 0 8px; }
   .choose { min-height: 52px; }
   .placeholder-note { bottom: 92px; }
+  .dossier { top: calc(var(--top-h) + 16px); bottom: 16px; padding: 18px 22px; }
+  .dossier__label { margin: 16px 0 8px; }
+  .path li { padding: 12px; }
+  .path__lvl { margin-bottom: 8px; }
+  .perks li { padding: 10px 12px; }
+  .perks b { font-size: 24px; }
 }
 @media (max-width: 900px) {
   .steps, .brand__text, .bar__keys, .placeholder-note { display: none; }
@@ -290,11 +383,19 @@ kbd {
   .ghost { top: 190px; font-size: 34vw; }
   .profile { order: 3; }
   .bar { order: 4; position: sticky; bottom: 0; padding: 12px 0 16px; background: linear-gradient(transparent, var(--navy-deep) 30%); border: 0; }
-  .choose { width: 100%; justify-content: center; }
+  .choose { width: 100%; justify-content: center; font-size: 20px; white-space: nowrap; }
+  .is-profile .roster, .is-profile .profile, .is-profile .bar { display: none; }
+  .dossier { position: relative; order: 3; inset: auto; width: auto; padding: 20px 16px; overflow: visible; transform: translateY(16px); }
+  .path, .perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dossier__actions { position: sticky; bottom: 0; flex-direction: column; align-items: stretch; margin: 0 -16px -20px; padding: 16px; background: linear-gradient(transparent, var(--navy-deep) 30%); }
+  .back { justify-content: center; }
+  .back kbd { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .roster, .profile, .bar, .ghost { opacity: 1; animation: none !important; transition: none !important; }
   .profile.is-swap { animation: none; }
+  .dossier, .path li, .perks li { opacity: 1; transform: none; transition: none; }
+  body.is-profile .roster, body.is-profile .profile, body.is-profile .bar, body.is-profile .placeholder-note { animation: none; visibility: hidden; }
   .stats__bar i { transition: none; }
   .loader { display: none; }
 }

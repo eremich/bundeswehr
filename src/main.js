@@ -1,5 +1,5 @@
 import { createStage } from "./stage.js";
-import { ROLES, STAT_LABELS } from "./data.js";
+import { PERKS, ROLES, STAT_LABELS } from "./data.js";
 
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const STAT_MAX = 5;
@@ -7,6 +7,7 @@ const WHEEL_LOCK_MS = 450;
 const LOADER_MS = 2200;
 const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/";
 const SCRAMBLE_MS = 420;
+const DOSSIER_OUT_MS = 450; // matches the CSS exit, then the panel is hidden
 
 const $ = (s) => document.querySelector(s);
 const list = $(".roster__list");
@@ -14,6 +15,11 @@ const stats = $(".stats");
 const loadout = $(".loadout");
 const entry = $(".entry");
 const pad = (n) => String(n).padStart(2, "0");
+const restart = (el, cls) => { el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); };
+const dossier = $(".dossier");
+const chooseBtn = $(".bar .choose");
+// arrows and wheel switch roles only on the desktop lobby — on phones the page scrolls normally
+const desktop = window.matchMedia("(min-width: 901px)");
 
 let stage = null;
 try {
@@ -90,34 +96,85 @@ list.addEventListener("click", (e) => {
   if (slot) select(Number(slot.dataset.i));
 });
 
+// ---------- Step 02: dossier ----------
+let mode = "lobby";
+let closeTimer = 0;
+
+function setStep(n) {
+  document.querySelectorAll(".steps li").forEach((li) => {
+    const step = Number(li.dataset.step);
+    li.classList.toggle("is-active", step === n);
+    li.classList.toggle("is-done", step < n);
+    if (step === n) li.setAttribute("aria-current", "step");
+    else li.removeAttribute("aria-current");
+  });
+}
+
+function fillDossier(r) {
+  $("[data-d-index]").textContent = `${pad(current + 1)} / ${ROLES.length}`;
+  $("[data-d-role]").textContent = r.role;
+  $("[data-d-bereich]").textContent = r.bereich;
+  $(".path").innerHTML = r.path.map((p, k) => `
+    <li style="--i:${k}"><span class="path__lvl">Level ${pad(k + 1)}</span><b>${p.title}</b><span class="path__text">${p.text}</span></li>`).join("");
+  $(".perks").innerHTML = PERKS[r.perks].map((p, k) => `
+    <li style="--i:${k}"><b>${p.value}</b><span>${p.label}</span></li>`).join("");
+}
+
+function openProfile() {
+  if (mode === "profile") return;
+  mode = "profile";
+  clearTimeout(closeTimer);
+  fillDossier(ROLES[current]);
+  dossier.hidden = false;
+  void dossier.offsetWidth; // let the entrance transition start from the hidden state
+  document.body.classList.add("is-profile");
+  setStep(2);
+  stage?.setPan(true);
+  stage?.flash();
+  if (!reducedMotion) restart($(".sweep"), "is-on");
+  scramble($("[data-d-role]"));
+  const title = $("#dossier-title");
+  title.focus({ preventScroll: true });
+  if (!desktop.matches) dossier.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+}
+
+function closeProfile() {
+  if (mode !== "profile") return;
+  mode = "lobby";
+  document.body.classList.remove("is-profile");
+  setStep(1);
+  stage?.setPan(false);
+  closeTimer = setTimeout(() => { dossier.hidden = true; }, reducedMotion ? 0 : DOSSIER_OUT_MS);
+  slots[current].focus({ preventScroll: true });
+  if (!desktop.matches) window.scrollTo({ top: 0, behavior: reducedMotion ? "auto" : "smooth" });
+}
+
+chooseBtn.addEventListener("click", openProfile);
+$(".back").addEventListener("click", closeProfile);
+
 // keys and wheel step through the roster like a game menu
-// only on the desktop lobby — on phones the page scrolls normally
-const desktop = window.matchMedia("(min-width: 901px)");
 document.addEventListener("keydown", (e) => {
-  if (!desktop.matches || e.target.closest("input, textarea")) return;
+  if (e.target.closest("input, textarea")) return;
+  if (mode === "profile") {
+    if (e.key === "Escape") closeProfile();
+    return;
+  }
+  if (e.key === "Enter" && !e.target.closest("a, button")) { openProfile(); return; }
+  if (!desktop.matches) return;
   if (e.key === "ArrowDown" || e.key === "ArrowRight") { e.preventDefault(); select(current + 1); }
   if (e.key === "ArrowUp" || e.key === "ArrowLeft") { e.preventDefault(); select(current - 1); }
   // keep keyboard focus on the highlighted role while stepping through the list
   if (list.contains(document.activeElement)) slots[current].focus();
-  if (e.key === "Enter" && !e.target.closest("a, button")) $(".choose").click();
 });
 let wheelLock = 0;
 window.addEventListener("wheel", (e) => {
-  if (!desktop.matches || Math.abs(e.deltaY) < 4 || e.target.closest(".profile")) return;
+  if (mode === "profile" || !desktop.matches || Math.abs(e.deltaY) < 4 || e.target.closest(".profile")) return;
   e.preventDefault();
   const now = performance.now();
   if (now < wheelLock) return;
   wheelLock = now + WHEEL_LOCK_MS;
   select(current + Math.sign(e.deltaY));
 }, { passive: false });
-
-$(".choose").addEventListener("click", (e) => {
-  e.preventDefault();
-  const btn = e.currentTarget;
-  btn.classList.remove("is-confirm");
-  void btn.offsetWidth;
-  btn.classList.add("is-confirm");
-});
 
 const SEEN_KEY = "bw-lobby-seen";
 function seenBefore() {
