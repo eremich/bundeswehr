@@ -23,7 +23,8 @@ const desktop = window.matchMedia("(min-width: 901px)");
 
 let stage = null;
 try {
-  stage = createStage($(".stage"), { reducedMotion });
+  // a horizontal swipe on the character switches roles on touch screens
+  stage = createStage($(".stage"), { reducedMotion, onSwipe: (dir) => mode === "lobby" && select(current + dir) });
   stage.preload(ROLES.map((r) => r.image));
 } catch {
   document.documentElement.classList.add("no-webgl");
@@ -55,6 +56,8 @@ stats.innerHTML = STAT_LABELS.map((label) => `
     Array.from({ length: STAT_MAX }, (_, k) => `<i style="--k:${k}"></i>`).join("")
   }</span></li>`).join("");
 const slots = [...list.querySelectorAll(".slot")];
+const dots = $(".picker__dots");
+dots.innerHTML = ROLES.map(() => "<i></i>").join("");
 
 let current = -1;
 
@@ -69,7 +72,15 @@ function select(i, { first = false } = {}) {
     s.classList.toggle("is-active", on);
     s.setAttribute("aria-pressed", on);
   });
-  slots[i].scrollIntoView({ block: "nearest", inline: "nearest", behavior: reducedMotion || first ? "auto" : "smooth" });
+  const behavior = reducedMotion || first ? "auto" : "smooth";
+  if (desktop.matches) slots[i].scrollIntoView({ block: "nearest", inline: "nearest", behavior });
+  else {
+    // phones: slide the role strip sideways only, never scroll the page
+    const offset = slots[i].getBoundingClientRect().left - list.getBoundingClientRect().left - 16;
+    list.scrollBy({ left: offset, behavior });
+  }
+  $("[data-picker-count]").textContent = `${pad(i + 1)} / ${ROLES.length}`;
+  [...dots.children].forEach((d, k) => d.classList.toggle("is-on", k === i));
 
   $("[data-index]").textContent = `${pad(i + 1)} / ${ROLES.length}`;
   $("[data-bereich]").textContent = r.bereich;
@@ -203,6 +214,7 @@ function go(next, { fromHistory = false } = {}) {
 }
 
 chooseBtn.addEventListener("click", () => go("profile"));
+document.querySelectorAll("[data-step-role]").forEach((btn) => btn.addEventListener("click", () => select(current + Number(btn.dataset.stepRole))));
 document.querySelectorAll("[data-go]").forEach((btn) => btn.addEventListener("click", () => go(btn.dataset.go)));
 // the logo always brings you back to the role select
 $(".brand").addEventListener("click", (e) => {

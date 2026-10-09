@@ -48,6 +48,17 @@
     <p class="ghost" aria-hidden="true" data-ghost>Technik</p>
     <canvas class="stage" aria-label="Charaktervorschau der gewählten Rolle"></canvas>
 
+    <!-- phones: swipe the character or use the arrows, like a mobile game's character select -->
+    <div class="picker">
+      <button type="button" class="picker__arrow" data-step-role="-1" aria-label="Vorherige Rolle">‹</button>
+      <div class="picker__info" aria-hidden="true">
+        <span class="picker__count" data-picker-count>01 / 10</span>
+        <span class="picker__dots"></span>
+        <span class="picker__hint">Wischen zum Wechseln</span>
+      </div>
+      <button type="button" class="picker__arrow" data-step-role="1" aria-label="Nächste Rolle">›</button>
+    </div>
+
     <section class="roster" aria-labelledby="roster-title">
       <p class="eyebrow">Charakterauswahl</p>
       <h1 class="roster__title" id="roster-title">Wer wirst du?</h1>

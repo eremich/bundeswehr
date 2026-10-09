@@ -245,6 +245,28 @@ kbd {
   pointer-events: none;
 }
 
+/* ---------- Phone picker (hidden on desktop) ---------- */
+.picker { display: none; }
+.picker__arrow {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--line);
+  background: rgba(0, 21, 33, 0.7);
+  color: var(--gold);
+  font: 400 30px/1 var(--font);
+  cursor: pointer;
+  transition: transform 140ms var(--ease-out), background-color 160ms ease;
+}
+.picker__arrow:active { transform: scale(0.94); background: rgba(249, 182, 0, 0.18); }
+.picker__info { display: grid; justify-items: center; gap: 6px; }
+.picker__count { font: 900 16px var(--display); letter-spacing: 0.08em; color: var(--white); }
+.picker__dots { display: flex; gap: 4px; }
+.picker__dots i { width: 6px; height: 6px; background: rgba(255, 255, 255, 0.25); transition: width 200ms var(--ease-out), background-color 200ms ease; }
+.picker__dots i.is-on { width: 18px; background: var(--gold); }
+.picker__hint { font: 700 10px var(--font); letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+
 /* ---------- Bottom bar ---------- */
 .bar { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 2; display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
 .bar__keys { display: flex; flex-wrap: wrap; gap: 24px; margin: 0; font: 700 11px var(--font); letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim); }
@@ -447,6 +469,8 @@ body.is-profile .bar, body.is-profile .placeholder-note { animation: to-below 28
   .roster__list { display: flex; overflow-x: auto; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 4px; }
   .roster__list li { flex: none; width: 200px; }
   .slot.is-active { transform: none; }
+  .picker { position: relative; z-index: 2; order: 2; display: flex; align-items: center; justify-content: space-between; margin-top: -72px; padding: 0 4px; }
+  body.is-profile .picker { display: none; }
   .stage { position: relative; order: 2; height: 52svh; min-height: 320px; margin: 0 calc(var(--gutter) * -1); width: calc(100% + var(--gutter) * 2); }
   .ghost { top: 190px; font-size: 34vw; }
   .profile { order: 3; }

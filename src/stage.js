@@ -17,6 +17,8 @@ const GLOW_STRENGTH = 0.32;
 const CUTOUT_SWAY = 0.1; // rad, idle sway of flat characters
 const CUTOUT_MAX_TURN = 0.4; // flat characters can't spin, only lean toward the cursor
 const TEXTURE_WAIT_MS = 2000;
+const SWIPE_MIN_PX = 45;
+const SWIPE_MAX_MS = 700;
 // on the profile screen the camera slides right so the character sits in the left third
 const PAN_X = 1.35;
 const PAN_EASE = 0.08;
@@ -129,7 +131,7 @@ const textureReady = (tex) => new Promise((resolve) => {
 
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
-export function createStage(canvas, { reducedMotion }) {
+export function createStage(canvas, { reducedMotion, onSwipe }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   const scene = new THREE.Scene();
@@ -182,18 +184,34 @@ export function createStage(canvas, { reducedMotion }) {
   resize();
   window.addEventListener("resize", resize);
 
-  // drag to lean the character toward the cursor, like inspecting it in a lobby
+  // mouse: drag to lean the character toward the cursor, like inspecting it in a lobby
+  // touch: a quick horizontal swipe switches to the next or previous role
   let turn = 0;
   let dragX = null;
-  canvas.addEventListener("pointerdown", (e) => { dragX = e.clientX; canvas.setPointerCapture(e.pointerId); });
+  let swipe = null;
+  canvas.addEventListener("pointerdown", (e) => {
+    if (e.pointerType === "touch") {
+      swipe = { x: e.clientX, y: e.clientY, t: performance.now() };
+      return;
+    }
+    dragX = e.clientX;
+    canvas.setPointerCapture(e.pointerId);
+  });
   canvas.addEventListener("pointermove", (e) => {
     if (dragX === null) return;
     turn = THREE.MathUtils.clamp(turn + (e.clientX - dragX) * DRAG_SPEED, -CUTOUT_MAX_TURN, CUTOUT_MAX_TURN);
     dragX = e.clientX;
   });
-  const endDrag = () => { dragX = null; };
-  canvas.addEventListener("pointerup", endDrag);
-  canvas.addEventListener("pointercancel", endDrag);
+  canvas.addEventListener("pointerup", (e) => {
+    dragX = null;
+    if (!swipe) return;
+    const dx = e.clientX - swipe.x;
+    const dy = e.clientY - swipe.y;
+    const quick = performance.now() - swipe.t < SWIPE_MAX_MS;
+    swipe = null;
+    if (quick && Math.abs(dx) > SWIPE_MIN_PX && Math.abs(dx) > Math.abs(dy)) onSwipe?.(dx < 0 ? 1 : -1);
+  });
+  canvas.addEventListener("pointercancel", () => { dragX = null; swipe = null; });
 
   let tween = null; // { from, to, start, dur, done }
   const animateCut = (to, dur) => new Promise((done) => {
