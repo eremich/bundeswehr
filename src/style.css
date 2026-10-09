@@ -402,6 +402,13 @@ body.is-profile .bar, body.is-profile .placeholder-note { animation: to-below 28
   .screen { top: calc(var(--top-h) + 16px); bottom: 16px; padding: 18px 22px; }
   .missions > li { padding-bottom: 10px; }
   .dossier__title { margin: 8px 0 2px; font-size: 44px; }
+  .missions > li { gap: 10px; padding-bottom: 6px; }
+  .missions p { margin-top: 2px; font-size: 12px; }
+  .missions__chips { margin-top: 4px; }
+  .missions__chips li { padding: 3px 6px; font-size: 10px; }
+  .missions__link { padding: 4px 0; }
+  .side a { gap: 4px; padding: 12px; }
+  .dossier__actions { padding-top: 14px; }
   .dossier__label { margin: 16px 0 8px; }
   .path li { padding: 12px; }
   .path__lvl { margin-bottom: 8px; }
