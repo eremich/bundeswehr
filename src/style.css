@@ -96,7 +96,7 @@ kbd {
 .brand__text { display: grid; line-height: 1.05; }
 .brand__text b { font-weight: 900; font-size: 16px; letter-spacing: 0.02em; text-transform: uppercase; }
 .brand__text span { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
-.steps { display: flex; gap: 28px; margin: 0 auto; font: 800 13px var(--font); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.4); }
+.steps { display: flex; gap: 28px; margin: 0 auto; font: 800 13px var(--font); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.62); }
 .steps li { display: flex; align-items: center; gap: 8px; height: var(--top-h); border-bottom: 2px solid transparent; }
 .steps span { font-size: 10px; }
 .steps .is-active { color: var(--white); border-color: var(--gold); }
@@ -149,7 +149,7 @@ kbd {
 /* ---------- Roster (left) ---------- */
 .roster { position: relative; z-index: 2; grid-column: 1; grid-row: 1; display: flex; flex-direction: column; min-height: 0; }
 .eyebrow { margin: 0 0 6px; font: 800 11px var(--font); letter-spacing: 0.24em; text-transform: uppercase; color: var(--gold); }
-.roster__title { margin: 0 0 18px; font: 900 clamp(44px, 4.6vw, 68px)/0.85 var(--display); text-transform: uppercase; }
+.roster__title { margin: 0 0 18px; font: 900 clamp(38px, 3.3vw, 52px)/0.9 var(--display); text-transform: uppercase; white-space: nowrap; }
 .roster__list { display: grid; gap: 4px; min-height: 0; overflow-y: auto; scrollbar-width: none; padding-right: 6px; }
 .roster__list::-webkit-scrollbar { display: none; }
 .slot {
@@ -264,10 +264,23 @@ kbd {
 @keyframes from-below { from { opacity: 0; transform: translateY(16px); } }
 
 /* ---------- Responsive ---------- */
+@media (min-width: 901px) and (max-height: 820px) {
+  .lobby { padding-top: calc(var(--top-h) + 16px); gap: 12px var(--gutter); padding-bottom: 16px; }
+  .roster__title { margin-bottom: 12px; }
+  .roster__list { gap: 3px; }
+  .slot { min-height: 40px; padding: 4px 12px; }
+  .slot__text { font-size: 13px; }
+  .slot__text small { font-size: 9px; }
+  .profile { padding: 16px 18px 18px; }
+  .profile__role { margin: 8px 0 6px; }
+  .profile__label { margin: 14px 0 8px; }
+  .choose { min-height: 52px; }
+  .placeholder-note { bottom: 92px; }
+}
 @media (max-width: 900px) {
   .steps, .brand__text, .bar__keys, .placeholder-note { display: none; }
   .top { justify-content: space-between; }
-  .lobby { display: flex; flex-direction: column; height: auto; min-height: 0; padding-top: calc(var(--top-h) + 20px); gap: 16px; overflow: visible; }
+  .lobby { display: flex; flex-direction: column; height: auto; min-height: 0; padding-top: calc(var(--top-h) + 20px); gap: 16px; overflow: visible; overflow-x: clip; }
   .roster { order: 1; }
   .roster__title { font-size: 48px; margin-bottom: 12px; }
   .roster__list { display: flex; overflow-x: auto; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 4px; }

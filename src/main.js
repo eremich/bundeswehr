@@ -18,7 +18,7 @@ const pad = (n) => String(n).padStart(2, "0");
 let stage = null;
 try {
   stage = createStage($(".stage"), { reducedMotion });
-  stage.preload(ROLES.filter((r) => r.image).map((r) => r.image));
+  stage.preload(ROLES.map((r) => r.image));
 } catch {
   document.documentElement.classList.add("no-webgl");
 }
