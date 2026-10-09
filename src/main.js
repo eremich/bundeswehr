@@ -103,13 +103,16 @@ const STEP_OF = { lobby: 1, profile: 2, briefing: 3 };
 let mode = "lobby";
 const hideTimers = new Map();
 
+const HASH_OF = { lobby: "", profile: "#profil", briefing: "#bewerbung" };
+const MODE_OF_HASH = { "#profil": "profile", "#bewerbung": "briefing" };
+
 function setStep(n) {
   document.querySelectorAll(".steps li").forEach((li) => {
     const step = Number(li.dataset.step);
     li.classList.toggle("is-active", step === n);
     li.classList.toggle("is-done", step < n);
-    if (step === n) li.setAttribute("aria-current", "step");
-    else li.removeAttribute("aria-current");
+    li.querySelector("button").toggleAttribute("aria-current", step === n);
+    if (step === n) li.querySelector("button").setAttribute("aria-current", "step");
   });
 }
 
@@ -167,11 +170,13 @@ function showScreen(name) {
   }
 }
 
-function go(next) {
+// fromHistory: the browser's back/forward button already changed the URL
+function go(next, { fromHistory = false } = {}) {
   if (next === mode) return;
   const r = ROLES[current];
   const from = mode;
   mode = next;
+  if (!fromHistory) history.pushState({ mode: next }, "", HASH_OF[next] || location.pathname);
   setStep(STEP_OF[next]);
   if (next === "lobby") {
     showScreen(null);
@@ -199,6 +204,12 @@ function go(next) {
 
 chooseBtn.addEventListener("click", () => go("profile"));
 document.querySelectorAll("[data-go]").forEach((btn) => btn.addEventListener("click", () => go(btn.dataset.go)));
+// the logo always brings you back to the role select
+$(".brand").addEventListener("click", (e) => {
+  e.preventDefault();
+  go("lobby");
+});
+window.addEventListener("popstate", (e) => go(e.state?.mode ?? MODE_OF_HASH[location.hash] ?? "lobby", { fromHistory: true }));
 
 // keys and wheel step through the roster like a game menu
 document.addEventListener("keydown", (e) => {
@@ -249,5 +260,9 @@ document.fonts.ready.then(async () => {
   try { sessionStorage.setItem(SEEN_KEY, "1"); } catch { /* storage blocked: loader just plays again */ }
   document.body.classList.add("is-in");
   select(0, { first: true });
+  // a shared #profil / #bewerbung link opens straight on that step
+  const deepLink = MODE_OF_HASH[location.hash];
+  history.replaceState({ mode: "lobby" }, "", location.pathname);
+  if (deepLink) go(deepLink);
   setTimeout(() => $(".loader").remove(), 700);
 });

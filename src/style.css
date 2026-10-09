@@ -99,6 +99,25 @@ kbd {
 .steps { display: flex; gap: 28px; margin: 0 auto; font: 800 13px var(--font); letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 255, 255, 0.62); }
 .steps li { display: flex; align-items: center; gap: 8px; height: var(--top-h); border-bottom: 2px solid transparent; }
 .steps span { font-size: 10px; }
+.steps button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+.steps b { font-weight: inherit; }
+@media (hover: hover) and (pointer: fine) {
+  .steps button:hover { color: var(--white); }
+}
 .steps .is-active { color: var(--white); border-color: var(--gold); }
 .steps .is-done { color: var(--gold); }
 .top__cta {
@@ -416,7 +435,11 @@ body.is-profile .bar, body.is-profile .placeholder-note { animation: to-below 28
   .perks b { font-size: 24px; }
 }
 @media (max-width: 900px) {
-  .steps, .brand__text, .bar__keys, .placeholder-note { display: none; }
+  .brand__text, .bar__keys, .placeholder-note { display: none; }
+  .steps { gap: 4px; margin: 0 auto; }
+  .steps b { display: none; }
+  .steps span { font-size: 13px; }
+  .steps button { justify-content: center; min-width: 44px; }
   .top { justify-content: space-between; }
   .lobby { display: flex; flex-direction: column; height: auto; min-height: 0; padding-top: calc(var(--top-h) + 20px); gap: 16px; overflow: visible; overflow-x: clip; }
   .roster { order: 1; }
